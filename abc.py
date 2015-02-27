@@ -7,9 +7,9 @@ import matplotlib.animation as animation
 np.random.seed()
 
 culture_limit = 1.0
-distance = culture_limit * 0.6
-number_clusters = 30
-number_per_cluster = 5
+distance = culture_limit * 0.8
+number_clusters = 10
+number_per_cluster = 3
 spread = False
 
 worldliness_max = 1
@@ -24,8 +24,8 @@ west_color = (0,0.7,0.83921)
 
 people = list()
 
-max_size = 3000
-alph = 1
+max_size = 5000
+alph = .95
 linewidth = 0
 
 def cap_color(color):
@@ -83,8 +83,7 @@ class Person:
         
         col = (colors[0],colors[1],colors[2])
         plt.scatter(self.x, self.y,c=col,s=self.size, alpha=alph, linewidths=linewidth)
-
-   
+  
 def interact(a,b):
     #cd../documents/github/culturecolors
     
@@ -185,7 +184,17 @@ def animate(i):
     for q in people:
         other_index = index
         while(other_index == index):
-            other_index = np.random.random_integers(0,len(people)-1)
+            
+            #attempted_other_index = 0
+            #
+            #if(index+10 > len(people)-1):
+            #    attempted_other_index = np.random.random_integers(index,index+10)
+            #else:
+            #    attempted_other_index = np.random.random_integers(index,len(people)-1)
+            
+            attempted_other_index = np.random.random_integers(0,len(people)-1)
+            other_index = attempted_other_index
+            
         interact( q, people[other_index] )
         index= index+1
     
@@ -193,28 +202,31 @@ def animate(i):
     for i in people:
         i.draw()
         
-       
-    
-    
-#  Creating clusters    
-for c in range(0, number_clusters):
-    angle = (2 * math.pi) / number_clusters * c 
-    
-    cluster_x = math.cos(angle) * distance
-    cluster_y = math.sin(angle) * distance
-    
-    for n in range(0,number_per_cluster):
-        shift_x = 0
-        shift_y = 0
-        if(spread):
-            shift_x = ((np.random.random_sample()*2)-1)/10
-            shift_y = ((np.random.random_sample()*2)-1)/10
-        people.append(Person(cluster_x+shift_x,cluster_y+shift_y))
+        
+#  Creating clusters
+starting_angle = np.random.random_sample() * (2*math.pi)
+if(number_clusters!=0 and number_per_cluster != 0):
+    for c in range(0, number_clusters):
+        angle = starting_angle + ((2 * math.pi) / number_clusters * c)
+        
+        cluster_x = math.cos(angle) * distance
+        cluster_y = math.sin(angle) * distance
+        
+        for n in range(0,number_per_cluster):
+            shift_x = 0
+            shift_y = 0
+            if(spread):
+                shift_x = ((np.random.random_sample()*2)-1)/10
+                shift_y = ((np.random.random_sample()*2)-1)/10
+            people.append(Person(cluster_x+shift_x,cluster_y+shift_y))
+else:
+    import sys
+    sys.exit()
     
         
-fig = plt.figure()
+fig = plt.figure(figsize=(8,8))
 fig.set_size_inches(10,10)
 plt.grid(True)
 
-ani = animation.FuncAnimation(fig,animate,interval=600)
+ani = animation.FuncAnimation(fig,animate,interval=5)
 plt.show()
