@@ -184,16 +184,7 @@ def animate(i):
     for q in people:
         other_index = index
         while(other_index == index):
-            
-            #attempted_other_index = 0
-            #
-            #if(index+10 > len(people)-1):
-            #    attempted_other_index = np.random.random_integers(index,index+10)
-            #else:
-            #    attempted_other_index = np.random.random_integers(index,len(people)-1)
-            
-            attempted_other_index = np.random.random_integers(0,len(people)-1)
-            other_index = attempted_other_index
+            other_index = np.random.random_integers(0,len(people)-1)
             
         interact( q, people[other_index] )
         index= index+1
