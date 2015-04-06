@@ -98,7 +98,7 @@ if(number_clusters != 0 && number_per_cluster != 0)
 				cluster_world_y + world_shift_y);
 
 			people.push(person);
-			person.cube.position.z += 50;
+			person.cube.position.z += 40;
 			scene.add(person.cube);
 		}
 	}
@@ -120,6 +120,7 @@ scene.add(ambientLight);
 var directionalLight = new THREE.DirectionalLight(0xffcccc);
 directionalLight.position.set((tile_width*number_tile_columns)+300, (tile_height*number_tile_rows)+300, 700);
 directionalLight.castShadow = true;
+
 
 scene.add(directionalLight);
 

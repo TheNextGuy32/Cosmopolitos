@@ -4,7 +4,7 @@ var context = canvas.getContext('2d');
 var centerX = canvas.width / 2;
 var centerY = canvas.height / 2;
 
-var radius = 10;
+var radius = 5;
 
 var graphRender = function () 
 {
@@ -26,7 +26,7 @@ var graphRender = function ()
             context.beginPath();
             context.arc(culture_x, culture_y, radius, 0, 2 * Math.PI, false);
             
-            var color = people[i].getColorHexString();//rgbToHex(people[i].colors[0]*255,people[i].colors[1]*255,people[i].colors[2]*255);
+            var color = people[i].getColorHexString();
             context.fillStyle = color;
             context.fill();
       };

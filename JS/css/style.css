@@ -36,6 +36,7 @@ header, article, aside,footer,#graph
 {
     background:#DDDDDD;
     box-shadow: 1px 1px 1px #999999;
+    border-top: ;
 }
 
 header
@@ -64,8 +65,8 @@ aside
 }
 #graph
 {
-    width:360px;
-    height:270px;
+    width:460px;
+    height:340px;
     background:white; 
     margin: 1em auto 1em auto; 
 }
