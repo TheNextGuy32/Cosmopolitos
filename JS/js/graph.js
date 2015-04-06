@@ -26,11 +26,8 @@ var graphRender = function ()
             context.beginPath();
             context.arc(culture_x, culture_y, radius, 0, 2 * Math.PI, false);
             
-
-            var color = rgbToHex(people[i].colors[0]*255,people[i].colors[1]*255,people[i].colors[2]*255);
+            var color = people[i].getColorHexString();//rgbToHex(people[i].colors[0]*255,people[i].colors[1]*255,people[i].colors[2]*255);
             context.fillStyle = color;
-            context.font = "11px serif";
-            //context.fillText(, 10, 50);
             context.fill();
       };
 

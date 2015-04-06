@@ -32,7 +32,7 @@ a:active {
 	position: relative;
 	padding-bottom:4em;
 }
-header, article, aside,footer
+header, article, aside,footer,#graph
 {
     background:#DDDDDD;
     box-shadow: 1px 1px 1px #999999;
@@ -40,8 +40,7 @@ header, article, aside,footer
 
 header
 {
-    height:6em;
-    padding:0.3em 1em 0em 5em;
+    padding:0.3em 1em 1em 5em;
 }
 article
 {
@@ -61,15 +60,14 @@ content
 }
 aside
 {
-    float:left;
-    margin-top:1.5em;
-    padding: 0em 2em 2em 2em;
+
 }
 #graph
 {
     width:360px;
     height:270px;
-    background:white;  
+    background:white; 
+    margin: 1em auto 1em auto; 
 }
 
 canvas
