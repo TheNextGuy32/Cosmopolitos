@@ -6,51 +6,13 @@ renderer.shadowMapEnabled=true;
 renderer.setSize( 800,600 );
 document.getElementById("3JSGame").appendChild( renderer.domElement );
 
-var geometry = new THREE.BoxGeometry( 10, 10, 100 );
+var geometry = new THREE.BoxGeometry( 10, 10, 10 );
 var red = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 var cube = new THREE.Mesh( geometry, red );
 scene.add( cube );
 
-function componentToHex(c) {
-    var hex = c.toString(16);
-    return hex.length == 1 ? "0" + hex : hex;
-}
-
-function rgbToHex(r, g, b) {
-    return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-function Tile (x,y) 
-{
-	var value = getRandomArbitrary(10,20);
-    this.geometry = new THREE.BoxGeometry( x, y, value );
-	var r = getRandomInt(10,50)/255;
-	var g = getRandomInt(100,200)/255;
-	var b = getRandomInt(10,50)/255;
-
-	//this.mesh = new THREE.MeshBasicMaterial( {color:0x000000});
-	this.mesh = new THREE.MeshLambertMaterial( {color:0x000000});
-	this.mesh.color.setRGB(r,g,b);
-	this.cube = new THREE.Mesh( this.geometry,this.mesh );
-	this.cube.position.z += value;
-	this.cube.castShadow = true;
-	this.cube.receiveShadow = true;
-}
 
 //Tile creation
-var number_tile_rows = 10;
-var number_tile_columns = 10;
-
-var tile_width = 50;
-var tile_height = 50;
-
 var tiles = new Array(number_tile_rows);
 for (var i = 0; i < number_tile_rows; i++) 
 {
@@ -73,63 +35,111 @@ for(var y = 0 ; y < number_tile_rows; y++)
 
 
 //People creation
-/*
-var number_clusters = 5;
-var number_per_cluster = 10;
 var starting_angle = Math.random() * (2*Math.PI);
+var cultural_spread = 1;
 
 var people=[];
 
-if(number_clusters !=0 && number_per_cluster != 0)
+if(number_clusters != 0 && number_per_cluster != 0)
 {
 	for (var c = 0 ; c < number_clusters ; c++)
 	{
 		var angle = starting_angle + ((2 * Math.PI) / number_clusters * c);
 
 		//The culture position of the cluster
-		var cluster_x = Math.cos(angle) * distance;
-		var cluster_y = Math.sin(angle) * distance;
+		var cluster_cultural_x = Math.cos(angle) * starting_cultural_distance;
+		var cluster_cultural_y = Math.sin(angle) * starting_cultural_distance;
+
+		var cluster_world_x = Math.floor(Math.random() * (number_tile_columns));
+		var cluster_world_y = Math.floor(Math.random() * (number_tile_rows));
 
 		for (var n = 0 ; n < number_per_cluster; n++)
 		{
-			var shift_x = 0;
-			var shift_y = 0;
-			if(spread)
+			//Spreading from cultural center
+			var cultural_shift_x = 0;
+			var cultural_shift_y = 0;
+			if(cultural_spread==1)
 			{
-				shift_x = ((np.random.random_sample()*2)-1)/10;
-				shift_y = ((np.random.random_sample()*2)-1)/10;
+				cultural_shift_x = getRandomArbitrary(-1,1);
+				cultural_shift_y = getRandomArbitrary(-1,1);
 			}
-			var person = Person(cluster_x+shift_x,cluster_y+shift_y);
+			//Creating the person
+			var person = new Person(
+				cluster_cultural_x+cultural_shift_x,
+				cluster_cultural_y+cultural_shift_y,
+				cluster_world_x , 
+				cluster_world_y);
+
 			people.push(person);
+			//person.cube.position.x += Math.random() * 1000;
+			person.cube.position.z += 40;
 			scene.add(person.cube);
 		}
 	}
 }
-*/
+
 
 //Altering camera
 camera.position.z =  300;
 camera.position.y = -100;
 camera.position.x = -100;
 camera.lookAt(new THREE.Vector3( tile_width*number_tile_columns, tile_height*number_tile_rows, 0 ));
-//camera.rotation.x-=1.250;
-//camera.rotation.y=0;
 camera.rotation.z-=1.250;
 
 var ambientLight = new THREE.AmbientLight(0x111155);
 scene.add(ambientLight);
 
 var directionalLight = new THREE.DirectionalLight(0xffffff);
-directionalLight.position.set((tile_width*number_tile_columns)+300, (tile_height*number_tile_rows)+300, 400);
+directionalLight.position.set((tile_width*number_tile_columns)+300, (tile_height*number_tile_rows)+300, 700);
 directionalLight.castShadow = true;
 scene.add(directionalLight);
 
 //Drawing
-var render = function () {
-	requestAnimationFrame( render );
+var render = function () 
+{
+	
+	for (var i = people.length - 1; i >= 0; i--) 
+	{
+		var direction = getRandomInt(0,4);
+		if(direction == 0)
+		{
+			if(people[i].world_y < number_tile_rows-1)
+			{
+				people[i].world_y +=1;
+			}
+		}
+		if(direction == 1)
+		{
+			if(people[i].world_x < number_tile_columns -1)
+			{
+				people[i].world_x+=1;
+			}
+		}
+		if(direction == 2)
+		{
+			if(people[i].world_y>0){
+				people[i].world_y-=1;
+			}
+		}
+		else
+		{
+			if(people[i].world_x>0)
+			{
+				people[i].world_x-=1;
+			}
+		}
 
+		people[i].UpdateCultureColor();
+		people[i].cube.position.x = tile_width * people[i].world_x;
+		people[i].cube.position.y = tile_height * people[i].world_y;
+		
+	};
 
 	renderer.render(scene, camera);
+	requestAnimationFrame( render );
 };
-
-render();
+var u = 0;
+//while(u < 100){
+	render();
+	u++;
+//}
