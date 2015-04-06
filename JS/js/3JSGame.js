@@ -1,10 +1,12 @@
+//sETUP THINGS
 var scene = new THREE.Scene();
 var camera = new THREE.OrthographicCamera( 800 / - 2, 800 / 2, 600 / 2, 600 / - 2, 0.1, 3000 );
 var renderer = new THREE.WebGLRenderer();
+renderer.shadowMapEnabled=true;
 renderer.setSize( 800,600 );
 document.getElementById("3JSGame").appendChild( renderer.domElement );
 
-var geometry = new THREE.BoxGeometry( 50, 50, 50 );
+var geometry = new THREE.BoxGeometry( 10, 10, 100 );
 var red = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 var cube = new THREE.Mesh( geometry, red );
 scene.add( cube );
@@ -21,17 +23,25 @@ function rgbToHex(r, g, b) {
 function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min;
 }
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
 function Tile (x,y) 
 {
-    this.geometry = new THREE.BoxGeometry( x, y, 10 );
+	var value = getRandomArbitrary(10,20);
+    this.geometry = new THREE.BoxGeometry( x, y, value );
 	var r = getRandomInt(10,50)/255;
 	var g = getRandomInt(100,200)/255;
 	var b = getRandomInt(10,50)/255;
 
-	this.mesh = new THREE.MeshBasicMaterial( {color:0x000000});
+	//this.mesh = new THREE.MeshBasicMaterial( {color:0x000000});
+	this.mesh = new THREE.MeshLambertMaterial( {color:0x000000});
 	this.mesh.color.setRGB(r,g,b);
 	this.cube = new THREE.Mesh( this.geometry,this.mesh );
+	this.cube.position.z += value;
+	this.cube.castShadow = true;
+	this.cube.receiveShadow = true;
 }
 
 //Tile creation
@@ -97,12 +107,24 @@ if(number_clusters !=0 && number_per_cluster != 0)
 }
 */
 
-
-camera.position.z = 300;
+//Altering camera
+camera.position.z =  300;
 camera.position.y = -100;
-camera.position.x =-100;
+camera.position.x = -100;
 camera.lookAt(new THREE.Vector3( tile_width*number_tile_columns, tile_height*number_tile_rows, 0 ));
+//camera.rotation.x-=1.250;
+//camera.rotation.y=0;
+camera.rotation.z-=1.250;
 
+var ambientLight = new THREE.AmbientLight(0x111155);
+scene.add(ambientLight);
+
+var directionalLight = new THREE.DirectionalLight(0xffffff);
+directionalLight.position.set((tile_width*number_tile_columns)+300, (tile_height*number_tile_rows)+300, 400);
+directionalLight.castShadow = true;
+scene.add(directionalLight);
+
+//Drawing
 var render = function () {
 	requestAnimationFrame( render );
 
