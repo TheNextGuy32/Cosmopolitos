@@ -1,6 +1,6 @@
 html, body
 {
-	margin: 0px;
+	  margin: 0px;
     padding: 0px;
     height:100%;
 }
@@ -32,24 +32,25 @@ a:active {
 	position: relative;
 	padding-bottom:4em;
 }
+header, article, aside,footer
+{
+    background:#DDDDDD;
+    box-shadow: 1px 1px 1px #999999;
+}
+
 header
 {
     height:6em;
-    background:#DDDDDD;
-    box-shadow: 1px 1px 1px #111111;
-    
     padding:0.3em 1em 0em 5em;
 }
 article
 {
-    padding: 1em 2em 2em 2em;
+    padding: 0.1em 2em 2em 2em;
     margin:auto;
     margin-top:1.5em;
     margin-bottom:2.5em;
     display:block;
-    background:#DDDDDD;
     width:60em;
-    box-shadow: 1px 1px 1px #111111;
 }
 content
 {
@@ -58,7 +59,18 @@ content
     height:100%;
     
 }
-
+aside
+{
+    float:left;
+    margin-top:1.5em;
+    padding: 0em 2em 2em 2em;
+}
+#graph
+{
+    width:360px;
+    height:270px;
+    background:white;  
+}
 
 canvas
 {
@@ -77,5 +89,4 @@ footer
    bottom:0;
    width:100%;
    height: 4em;
-   background:#DDDDDD;
 }

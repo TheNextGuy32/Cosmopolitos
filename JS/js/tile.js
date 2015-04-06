@@ -14,4 +14,10 @@ function Tile (x,y)
 	this.cube.position.z += value;
 	this.cube.castShadow = true;
 	this.cube.receiveShadow = true;
+
+	this.Water = function()
+	{
+		//Lower depth
+		//Turn blue
+	};
 }

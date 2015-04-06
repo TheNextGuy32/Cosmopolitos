@@ -6,6 +6,8 @@ renderer.shadowMapEnabled=true;
 renderer.setSize( 800,600 );
 document.getElementById("3JSGame").appendChild( renderer.domElement );
 
+var keyboard = new THREEx.KeyboardState();
+
 var geometry = new THREE.BoxGeometry( 10, 10, 10 );
 var red = new THREE.MeshBasicMaterial( { color: 0xff0000 } );
 var cube = new THREE.Mesh( geometry, red );
@@ -60,8 +62,8 @@ if(number_clusters != 0 && number_per_cluster != 0)
 			var cultural_shift_y = 0;
 			if(cultural_spread==1)
 			{
-				cultural_shift_x = getRandomArbitrary(-1,1);
-				cultural_shift_y = getRandomArbitrary(-1,1);
+				cultural_shift_x = getRandomArbitrary(-culture_spread,culture_spread);
+				cultural_shift_y = getRandomArbitrary(-culture_spread,culture_spread);
 			}
 			//Creating the person
 			var person = new Person(
@@ -83,7 +85,7 @@ if(number_clusters != 0 && number_per_cluster != 0)
 camera.position.z =  300;
 camera.position.y = -100;
 camera.position.x = -100;
-camera.lookAt(new THREE.Vector3( tile_width*number_tile_columns, tile_height*number_tile_rows, 0 ));
+camera.lookAt(new THREE.Vector3( 500, 500, 0 ));
 camera.rotation.z-=1.250;
 
 var ambientLight = new THREE.AmbientLight(0x111155);
@@ -95,51 +97,91 @@ directionalLight.castShadow = true;
 scene.add(directionalLight);
 
 //Drawing
-var render = function () 
+var update = function()
 {
-	
 	for (var i = people.length - 1; i >= 0; i--) 
 	{
-		var direction = getRandomInt(0,4);
-		if(direction == 0)
-		{
-			if(people[i].world_y < number_tile_rows-1)
+		if(getRandomInt(0,chance_to_move) == 0){
+			var direction = getRandomInt(0,4);
+			if(direction == 0)
 			{
-				people[i].world_y +=1;
+				if(people[i].world_y < number_tile_rows-1)
+				{
+					people[i].world_y +=1;
+				}
 			}
-		}
-		if(direction == 1)
-		{
-			if(people[i].world_x < number_tile_columns -1)
+			if(direction == 1)
 			{
-				people[i].world_x+=1;
+				if(people[i].world_x < number_tile_columns -1)
+				{
+					people[i].world_x+=1;
+				}
 			}
-		}
-		if(direction == 2)
-		{
-			if(people[i].world_y>0){
-				people[i].world_y-=1;
-			}
-		}
-		else
-		{
-			if(people[i].world_x>0)
+			if(direction == 2)
 			{
-				people[i].world_x-=1;
+				if(people[i].world_y>0){
+					people[i].world_y-=1;
+				}
+			}
+			if(direction == 3)
+			{
+				if(people[i].world_x>0)
+				{
+					people[i].world_x-=1;
+				}
 			}
 		}
 
 		people[i].UpdateCultureColor();
 		people[i].cube.position.x = tile_width * people[i].world_x;
 		people[i].cube.position.y = tile_height * people[i].world_y;
-		
+
 	};
 
+	takeInput();
+	render();
+};
+
+var takeInput= function()
+{
+	var camera_speed = 5;
+	if( keyboard.pressed("w") )
+	{
+		camera.position.y += camera_speed;
+		camera.position.x += camera_speed;		
+	}
+	else if(keyboard.pressed("s"))
+	{
+		camera.position.y -= camera_speed;
+		camera.position.x -= camera_speed;		
+	}	
+	
+	
+	if( keyboard.pressed("a") )
+	{
+		camera.position.x -= camera_speed/2;
+		camera.position.y += camera_speed/2;		
+	}
+	else if(keyboard.pressed("d"))
+	{
+		camera.position.x += camera_speed/2;
+		camera.position.y -= camera_speed/2;		
+	}	
+	
+	
+
+};
+
+var render = function () 
+{
+
 	renderer.render(scene, camera);
-	requestAnimationFrame( render );
+	graphRender();
+	requestAnimationFrame( update );
 };
 var u = 0;
 //while(u < 100){
+	update();
 	render();
 	u++;
 //}
