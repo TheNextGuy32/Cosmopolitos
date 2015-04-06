@@ -28,16 +28,24 @@ max_size = 5000
 alph = .95
 linewidth = 0
 
+t_width = 50
+t_height = 50
+
+t_col = 10
+t_row = 10
+
 def cap_color(color):
     if(color>1): 
         return 1
     return color
         
 class Person:
-    def __init__(self,x,y):
+    def __init__(self,x,y,tx,ty):
         self.worldliness=0.1
         self.x = x
         self.y = y
+        self.tx = tx
+        self.ty = ty
         
     def draw(self):
         if(self.worldliness >worldliness_max):
@@ -46,8 +54,7 @@ class Person:
             self.worldliness = 0
             
         self.size = max_size *  (0.1 + (0.9 * self.worldliness/worldliness_max))
-        
-        
+       
         while(self.x>culture_limit): 
             self.x = self.x-culture_limit
         while(self.x<-culture_limit): 
@@ -83,6 +90,7 @@ class Person:
         
         col = (colors[0],colors[1],colors[2])
         plt.scatter(self.x, self.y,c=col,s=self.size, alpha=alph, linewidths=linewidth)
+        
   
 def interact(a,b):
     #cd../documents/github/culturecolors
@@ -219,5 +227,11 @@ fig = plt.figure(figsize=(8,8))
 fig.set_size_inches(10,10)
 plt.grid(True)
 
+world_map = plt.figure(figsize=(8,8))
+world_map.set_size_inches(10,10)
+world_map.grid(True)
+
 ani = animation.FuncAnimation(fig,animate,interval=5)
+world_animation = animation.FuncAnimation(world_map,world_animate,interval=5)
+
 plt.show()
