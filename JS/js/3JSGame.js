@@ -25,15 +25,13 @@ scene.add( cubess );
 
 
 //Tile creation
-var tiles = new Array(number_tile_rows);
-for (var i = 0; i < number_tile_rows; i++) 
-{
-	tiles[i] = new Array(number_tile_columns);
-}
+var tiles = new Array();
 
 //Populating array
 for(var y = 0 ; y < number_tile_rows; y++)
 {
+	tiles[y] = new Array();
+
 	for(var x = 0 ; x < number_tile_columns; x++)
 	{
 		var tile = new Tile(tile_width,tile_height);
@@ -47,10 +45,21 @@ for(var y = 0 ; y < number_tile_rows; y++)
 	}	
 }
 
-//tiles[0][12].water();
-//tiles[1][12].water();
 
+for(var y = 0 ; y < number_tile_rows; y++)
+{
+	tiles[y][Math.floor(number_tile_columns/2)].water();
+	tiles[y][Math.floor(number_tile_columns/2)+1].water();
+}
 
+for(var x = 0 ; x < number_tile_columns; x++)
+{
+	tiles[Math.floor(number_tile_rows/2)][x].water();
+	tiles[Math.floor(number_tile_rows/2)+1][x].water();
+
+}
+
+if(create_people==1){
 //People creation
 var starting_angle = Math.random() * (2*Math.PI);
 var cultural_spread = 1;
@@ -64,8 +73,8 @@ if(number_clusters != 0 && number_per_cluster != 0)
 		var angle = starting_angle + ((2 * Math.PI) / number_clusters * c);
 
 		//The culture position of the cluster
-		var cluster_cultural_x = Math.cos(angle) * starting_cultural_distance;
-		var cluster_cultural_y = Math.sin(angle) * starting_cultural_distance;
+		var cluster_cultural_x =getRandomArbitrary(-starting_cultural_distance,starting_cultural_distance); //Math.cos(angle) * starting_cultural_distance;
+		var cluster_cultural_y =getRandomArbitrary(-starting_cultural_distance,starting_cultural_distance);//Math.sin(angle) * starting_cultural_distance;
 
 		var cluster_world_x = Math.floor(Math.random() * (number_tile_columns));
 		var cluster_world_y = Math.floor(Math.random() * (number_tile_rows));
@@ -77,8 +86,8 @@ if(number_clusters != 0 && number_per_cluster != 0)
 			var cultural_shift_y = 0;
 			if(cultural_spread==1)
 			{
-				cultural_shift_x = getRandomArbitrary(-culture_spread,culture_spread);
-				cultural_shift_y = getRandomArbitrary(-culture_spread,culture_spread);
+				cultural_shift_x = getRandomArbitrary(-culture_spread_amount,culture_spread_amount);
+				cultural_shift_y = getRandomArbitrary(-culture_spread_amount,culture_spread_amount);
 			}
 
 			var world_shift_x = 0;
@@ -97,11 +106,16 @@ if(number_clusters != 0 && number_per_cluster != 0)
 				cluster_world_x + world_shift_x, 
 				cluster_world_y + world_shift_y);
 
-			people.push(person);
-			person.cube.position.z += 40;
-			scene.add(person.cube);
+			if(!tiles[person.world_y][person.world_x].isWater)
+			{
+				people.push(person);
+				person.cube.position.z += 40;
+				scene.add(person.cube);
+			}
 		}
 	}
+}
+
 }
 
 
@@ -117,17 +131,40 @@ camera.rotation.z-=1.250;
 var ambientLight = new THREE.AmbientLight(0x111155);
 scene.add(ambientLight);
 
-var directionalLight = new THREE.DirectionalLight(0xffcccc);
-directionalLight.position.set((tile_width*number_tile_columns)+300, (tile_height*number_tile_rows)+300, 700);
-directionalLight.castShadow = true;
+var sunLight = new THREE.PointLight(0xffcccc,1.5,0);
+sunLight.position.set((tile_width*number_tile_columns)+300,(tile_height*number_tile_rows)+300, 700);
+sunLight.castShadow = true;
+scene.add(sunLight);
 
+var average_culture_x = 0;
+var average_culture_y = 0;
 
-scene.add(directionalLight);
+var old_average_culture_x = 0;
+var old_average_culture_y = 0;
+
+var furthest_culture = 1;
 
 //Drawing
 var update = function()
 {
-	for (var i = people.length - 1; i >= 0; i--) 
+	if(create_people==1)
+	{
+		updatePeople(); 
+	}
+
+	takeInput();
+	render();
+
+	requestAnimationFrame( update );
+};
+
+var updatePeople = function()
+{
+	//furthest_culture = 1;
+	old_average_culture_x = average_culture_x;
+	old_average_culture_y = average_culture_y;
+
+	for (var i = 0; i < people.length; i++) 
 	{
 		if(getRandomInt(0,chance_to_move) == 0)
 		{
@@ -139,39 +176,65 @@ var update = function()
 					if(people[i].world_y < number_tile_rows-1)
 					{
 						people[i].world_y +=1;
+						if(tiles[people[i].world_y][people[i].world_x].isWater)
+						{
+							people[i].world_y -=1;
+						}
 					}
 				}
+
 				if(direction == 1)
 				{
 					if(people[i].world_x < number_tile_columns -1)
 					{
 						people[i].world_x+=1;
+						if(tiles[people[i].world_y][people[i].world_x].isWater)
+						{
+							people[i].world_x-=1;
+						}
 					}
 				}
+
 				if(direction == 2)
 				{
-					if(people[i].world_y>0){
+					if(people[i].world_y>0)
+					{
 						people[i].world_y-=1;
+						if(tiles[people[i].world_y][people[i].world_x].isWater)
+						{
+							people[i].world_y+=1;
+						}
 					}
+
 				}
 				if(direction == 3)
 				{
 					if(people[i].world_x>0)
 					{
 						people[i].world_x-=1;
+						if(tiles[people[i].world_y][people[i].world_x].isWater)
+						{
+							people[i].world_x+=1;
+						}
+
 					}
 				}
+
 			}
 			else
 			{
 				people[i].talking -= 1;	
 			}
-		}
+			people[i].UpdateCultureColor(old_average_culture_x,old_average_culture_y,furthest_culture);
+			average_culture_x+=people[i].culture_x;
+			average_culture_y+=people[i].culture_y;
 
-		people[i].UpdateCultureColor();
-		people[i].cube.position.x = (tile_width * people[i].world_x);// + getRandomArbitrary(-(tile_width/2),(tile_width/2));
-		people[i].cube.position.y = (tile_height * people[i].world_y);// + getRandomArbitrary(-(tile_height/2),(tile_height/2));
+			people[i].cube.position.x = (tile_width * people[i].world_x) + getRandomArbitrary(-(tile_width/2),(tile_width/2));
+			people[i].cube.position.y = (tile_height * people[i].world_y) + getRandomArbitrary(-(tile_height/2),(tile_height/2));
+		}
 	};
+	average_culture_x = average_culture_x/people.length;
+	average_culture_y = average_culture_y/people.length;
 
 	//Loop through everyone and interact
 	for (var i = 0; i < people.length; i++) 
@@ -190,28 +253,26 @@ var update = function()
 							people[i].talking+=talking_wait;
 							people[q].talking+=talking_wait;
 
-							interact(people[i],people[q]);
+							var is_furthest = interact(people[i],people[q]);
+
+							if(is_furthest > furthest_culture)
+							{
+								furthest_culture = is_furthest;
+							}
 						}
 					}
 				}
 			};
 		}
 	};
-
-
-	takeInput();
-	render();
-
-	requestAnimationFrame( update );
 };
 
 
 
 
-
-var takeInput= function()
+var takeInput = function()
 {
-	var camera_speed = 5;
+	var camera_speed = 15;
 	if( keyboard.pressed("w") )
 	{
 		camera.position.y += camera_speed;
@@ -239,7 +300,7 @@ var takeInput= function()
 var render = function () 
 {
 	renderer.render(scene, camera);
-	graphRender();
+	graphRender(furthest_culture);
 	
 };
 

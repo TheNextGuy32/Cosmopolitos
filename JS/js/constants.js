@@ -10,23 +10,32 @@ var east_color = [1,0.5,0];
 var south_color = [0.545/255,0.1254,0.73];
 var west_color = [0,0.7,0.83921];
 */
-var number_clusters = 10;
-var number_per_cluster = 3;
+
+var create_people =1;
+
+var number_clusters = 5;
+var number_per_cluster = 10;
 
 var starting_cultural_distance = 0.9;
-var culture_spread = 0.05;
-var world_spread = 3;
+var culture_spread = 1;
+var culture_spread_amount = 0.15;
 
-var chance_to_move = 8;//16;
+var world_spread = 0;
+var world_spread_amount = 1;
 
-var number_tile_rows = 12;
-var number_tile_columns = 12;
+var chance_to_move = 16;//16;
+
+var number_tile_rows = 15;
+var number_tile_columns =15;
 
 var tile_width = 50;
 var tile_height = 50;
 
-var magnitude_shock = 1;
-var radian_shock = 1;
-var pull_shock = 0;
+var magnitude_shock = 0;
+var radian_shock = 0;
+var pull_shock = 1;
 
-var talking_wait = 1;//10;
+var wordliness_rate = 0.1;
+var pull_rate = 0.1;
+
+var talking_wait = 3;//10;

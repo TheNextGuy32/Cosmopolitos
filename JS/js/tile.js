@@ -7,7 +7,7 @@ function Tile (x,y)
 	var g = getRandomInt(100,200)/255;
 	var b = getRandomInt(10,50)/255;
 
-	this.mesh = new THREE.MeshLambertMaterial( {color:0x000000});
+	this.mesh = new THREE.MeshLambertMaterial( {color:0x000000, transparent:true,opacity:1});
 	this.mesh.color.setRGB(r,g,b);
 	
 	this.cube = new THREE.Mesh( this.geometry,this.mesh );
@@ -36,6 +36,7 @@ function Tile (x,y)
 		this.cube.scale.z = 0.5
 
 		this.isWater = true;
+		this.mesh.opacity = 1;
 		
 		//Turn blue
 		this.mesh.color.setRGB(getRandomInt(10,20)/255,getRandomInt(10,20)/255,getRandomInt(100,200)/255);
